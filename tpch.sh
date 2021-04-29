@@ -24,7 +24,7 @@ check_variables()
 	fi
 	local count=$(grep "REPO_URL=" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "REPO_URL=\"https://github.com/pivotalguru/TPC-H\"" >> $MYVAR
+		echo "REPO_URL=\"https://github.com/PlaidCloud/TPC-H\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
 	local count=$(grep "ADMIN_USER=" $MYVAR | wc -l)
@@ -34,7 +34,7 @@ check_variables()
 	fi
 	local count=$(grep "INSTALL_DIR=" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "INSTALL_DIR=\"/pivotalguru\"" >> $MYVAR
+		echo "INSTALL_DIR=\"/greenplum\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
 	local count=$(grep "EXPLAIN_ANALYZE=" $MYVAR | wc -l)
@@ -54,7 +54,7 @@ check_variables()
 	fi
 	local count=$(grep "GEN_DATA_SCALE" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "GEN_DATA_SCALE=\"3000\"" >> $MYVAR
+		echo "GEN_DATA_SCALE=\"10\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
 	local count=$(grep "SINGLE_USER_ITERATIONS" $MYVAR | wc -l)
@@ -146,29 +146,31 @@ yum_installs()
 {
 	### Install and Update Demos ###
 	echo "############################################################################"
-	echo "Install git and gcc with yum."
+	echo "Install git and gcc with apt."
 	echo "############################################################################"
 	echo ""
 	# Install git and gcc if not found
-	local YUM_INSTALLED=$(yum --help 2> /dev/null | wc -l)
+	local APT_INSTALLED=$(apt --help 2> /dev/null | wc -l)
 	local CURL_INSTALLED=$(gcc --help 2> /dev/null | wc -l)
 	local GIT_INSTALLED=$(git --help 2> /dev/null | wc -l)
 
-	if [ "$YUM_INSTALLED" -gt "0" ]; then
+	if [ "$APT_INSTALLED" -gt "0" ]; then
 		if [ "$CURL_INSTALLED" -eq "0" ]; then
-			yum -y install gcc
+			apt update
+			apt -y install build-essential
 		fi
 		if [ "$GIT_INSTALLED" -eq "0" ]; then
-			yum -y install git
+			apt update
+			apt -y install git
 		fi
 	else
 		if [ "$CURL_INSTALLED" -eq "0" ]; then
-			echo "gcc not installed and yum not found to install it."
+			echo "gcc not installed and apt not found to install it."
 			echo "Please install gcc and try again."
 			exit 1
 		fi
 		if [ "$GIT_INSTALLED" -eq "0" ]; then
-			echo "git not installed and yum not found to install it."
+			echo "git not installed and apt not found to install it."
 			echo "Please install git and try again."
 			exit 1
 		fi
@@ -271,5 +273,5 @@ repo_init
 script_check
 echo_variables
 
-su --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS" $ADMIN_USER
+sudo --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS" $ADMIN_USER
 
