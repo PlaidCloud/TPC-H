@@ -104,6 +104,15 @@ else
 fi
 	
 for i in $(ls -d $PWD/0*); do
-	echo "$i/rollout.sh"
-	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS
+	if [[ "$i" == *"01_gen_data"]]; then
+		if [ "$RUN_GEN_DATA" == "true" ]; then
+			echo "$i/rollout.sh RUNNING DATA GENERATION"
+			$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS
+		else
+			echo "XXX SKIPPING DATA GENERATION"
+		fi
+	else
+		echo "$i/rollout.sh"
+		$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS
+	fi
 done
