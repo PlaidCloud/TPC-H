@@ -104,7 +104,7 @@ else
 fi
 	
 for i in $(ls -d $PWD/0*); do
-	if [[ "$i" == *"01_gen_data"]]; then
+	if [ "$i" == "$PWD/01_gen_data" ]; then
 		if [ "$RUN_GEN_DATA" == "true" ]; then
 			echo "$i/rollout.sh RUNNING DATA GENERATION"
 			$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS
