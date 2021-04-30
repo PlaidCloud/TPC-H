@@ -307,6 +307,7 @@ sudo /sbin/ldconfig
 set env LD_LIBRARY_PATH=/usr/local/greenplum-db-6.11.2/lib:/usr/local/greenplum-db-6.11.2/ext/python/lib
 set env MASTER_DATA_DIRECTORY=/greenplum/data-1
 set env GPHOME=/usr/local/greenplum-db-6.11.2
+set env PATH=/opt/gptext/bin/:/usr/local/greenplum-db-6.11.2/bin:/usr/local/greenplum-db-6.11.2/ext/python/bin:/usr/local/madlib/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Now run the various methods
 check_user
