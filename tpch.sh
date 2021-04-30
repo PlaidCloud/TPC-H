@@ -65,13 +65,13 @@ check_variables()
 	#00
 	local count=$(grep "RUN_COMPILE_TPCH" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_COMPILE_TPCH=\"false\"" >> $MYVAR
+		echo "RUN_COMPILE_TPCH=\"true\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
 	#01
 	local count=$(grep "RUN_GEN_DATA" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_GEN_DATA=\"false\"" >> $MYVAR
+		echo "RUN_GEN_DATA=\"true\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
 	#02
@@ -303,14 +303,14 @@ echo_variables()
 # Body
 ##################################################################################################################################################
 # Try to deal with libz.so.1 errors
-sudo /sbin/ldconfig
-set env LD_LIBRARY_PATH=/usr/local/greenplum-db-6.11.2/lib:/usr/local/greenplum-db-6.11.2/ext/python/lib
-set env MASTER_DATA_DIRECTORY=/greenplum/data-1
-set env GPHOME=/usr/local/greenplum-db-6.11.2
-set env PATH=/opt/gptext/bin/:/usr/local/greenplum-db-6.11.2/bin:/usr/local/greenplum-db-6.11.2/ext/python/bin:/usr/local/madlib/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#sudo /sbin/ldconfig
+#set env LD_LIBRARY_PATH=/usr/local/greenplum-db-6.11.2/lib:/usr/local/greenplum-db-6.11.2/ext/python/lib
+#set env MASTER_DATA_DIRECTORY=/greenplum/data-1
+#set env GPHOME=/usr/local/greenplum-db-6.11.2
+#set env PATH=/opt/gptext/bin/:/usr/local/greenplum-db-6.11.2/bin:/usr/local/greenplum-db-6.11.2/ext/python/bin:/usr/local/madlib/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Now run the various methods
-check_user
+# check_user
 check_variables
 yum_installs
 apt_installs
@@ -320,7 +320,8 @@ script_check
 echo_variables
 
 echo "Executing rollout command as $ADMIN_USER"
-# ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS
+cd $INSTALL_DIR/$REPO
+./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS
 #sudo -H -u gpadmin bash -c "cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS"
 
 echo "Switch back to gpadmin user and run the following commands"
