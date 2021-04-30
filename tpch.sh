@@ -146,7 +146,30 @@ yum_installs()
 {
 	### Install and Update Demos ###
 	echo "############################################################################"
-	echo "Install git and gcc with apt."
+	echo "Install git and gcc with yum if this is a yum based OS"
+	echo "############################################################################"
+	echo ""
+	# Install git and gcc if not found
+	local YUM_INSTALLED=$(yum --help 2> /dev/null | wc -l)
+	local CURL_INSTALLED=$(gcc --help 2> /dev/null | wc -l)
+	local GIT_INSTALLED=$(git --help 2> /dev/null | wc -l)
+
+	if [ "$YUM_INSTALLED" -gt "0" ]; then
+		if [ "$CURL_INSTALLED" -eq "0" ]; then
+			yum -y install gcc
+		fi
+		if [ "$GIT_INSTALLED" -eq "0" ]; then
+			yum -y install git
+		fi
+	fi
+	echo ""
+}
+
+apt_installs()
+{
+	### Install and Update Demos ###
+	echo "############################################################################"
+	echo "Install git and gcc with apt if this is a apt based OS"
 	echo "############################################################################"
 	echo ""
 	# Install git and gcc if not found
@@ -156,26 +179,37 @@ yum_installs()
 
 	if [ "$APT_INSTALLED" -gt "0" ]; then
 		if [ "$CURL_INSTALLED" -eq "0" ]; then
-			apt update
-			apt -y install build-essential
+			sudo apt update
+			sudo apt -y upgrade
+			sudo apt -y install build-essential
 		fi
 		if [ "$GIT_INSTALLED" -eq "0" ]; then
-			apt update
-			apt -y install git
-		fi
-	else
-		if [ "$CURL_INSTALLED" -eq "0" ]; then
-			echo "gcc not installed and apt not found to install it."
-			echo "Please install gcc and try again."
-			exit 1
-		fi
-		if [ "$GIT_INSTALLED" -eq "0" ]; then
-			echo "git not installed and apt not found to install it."
-			echo "Please install git and try again."
-			exit 1
+			sudo apt update
+			sudo apt -y upgrade
+			sudo apt -y install git
 		fi
 	fi
 	echo ""
+}
+
+check_installs()
+{
+	### Check for the installations independent of the OS type ###
+	echo "############################################################################"
+	echo "Check that gcc and git are installed on the server"
+	echo "############################################################################"
+	echo ""
+
+	if [ "$CURL_INSTALLED" -eq "0" ]; then
+		echo "gcc not installed and neither yum nor apt found to install it."
+		echo "Please install gcc and try again."
+		exit 1
+	fi
+	if [ "$GIT_INSTALLED" -eq "0" ]; then
+		echo "git not installed and neither yum nor apt found to install it."
+		echo "Please install git and try again."
+		exit 1
+	fi
 }
 
 repo_init()
@@ -265,13 +299,20 @@ echo_variables()
 ##################################################################################################################################################
 # Body
 ##################################################################################################################################################
+# Try to deal with libz.so.1 errors
+sudo /sbin/ldconfig
 
+# Now run the various methods
 # check_user
 check_variables
 yum_installs
+apt_installs
+check_installs
 repo_init
 script_check
 echo_variables
+
+sudo su
 
 su -c "cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS" $ADMIN_USER
 
