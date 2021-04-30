@@ -304,6 +304,9 @@ echo_variables()
 ##################################################################################################################################################
 # Try to deal with libz.so.1 errors
 sudo /sbin/ldconfig
+set env LD_LIBRARY_PATH=/usr/local/greenplum-db-6.11.2/lib:/usr/local/greenplum-db-6.11.2/ext/python/lib
+set env MASTER_DATA_DIRECTORY=/greenplum/data-1
+set env GPHOME=/usr/local/greenplum-db-6.11.2
 
 # Now run the various methods
 check_user
