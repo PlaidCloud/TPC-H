@@ -200,6 +200,9 @@ check_installs()
 	echo "############################################################################"
 	echo ""
 
+	local CURL_INSTALLED=$(gcc --help 2> /dev/null | wc -l)
+	local GIT_INSTALLED=$(git --help 2> /dev/null | wc -l)
+
 	if [ "$CURL_INSTALLED" -eq "0" ]; then
 		echo "gcc not installed and neither yum nor apt found to install it."
 		echo "Please install gcc and try again."
