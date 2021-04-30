@@ -41,7 +41,7 @@ Installation
 ssh root@mdw
 
 2. Download the tpch.sh file
-curl https://raw.githubusercontent.com/pivotalguru/TPC-H/master/tpch.sh > tpch.sh
+curl https://raw.githubusercontent.com/PlaidCloud/TPC-H/master/tpch.sh > tpch.sh
 chmod 755 tpch.sh
 
 ########################################################################################
